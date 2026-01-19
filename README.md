@@ -57,3 +57,9 @@ Domaine de production : `https://gameverse.nassimmanseur.fr`
 ## Notes
 - Les images doivent être placées dans `assets/images/`.
 - CORS backend : autoriser le domaine Vercel du front.
+
+## Améliorations récentes (Jan 2026)
+- **RankingPage optimisée** : Chargement rapide des filtres, jeux à la demande avec spinner feedback
+- **FavoriteButton unifié** : Composant réutilisable dans SearchPage, AccountInfo, CategoryColumn, GameDetails
+- **Suppression du texte descriptif** : Dans le display UI (garde le complet pour l'API)
+- **Scroll immédiat** : Feedback UX lors du clic sur un filtre

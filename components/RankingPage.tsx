@@ -119,32 +119,24 @@ const RankingPage: React.FC = () => {
       .map(([theme]) => theme);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-        try {
-            // Chargement de tous les jeux pour extraire les catégories - sans limite
-            const res = await api.get('/games', { params: { limit: 10000 } });
-            const games: Game[] = res.data.data || res.data;
-            
-            // On stocke tout, mais on n'affiche rien dans displayGames au début
-            setAllGames(games); 
+  const [loadingGames, setLoadingGames] = useState(false);
 
-            // Extraction unique pour les boutons - limité aux genres les plus populaires
-            const allPlats = new Set<string>();
-            games.forEach(g => {
-                g.platforms.forEach(p => allPlats.add(p));
-            });
+  useEffect(() => {
+    const fetchFilters = async () => {
+        try {
+            // Charger JUSTE les filtres (ultra rapide) via la route /filters
+            const res = await api.get('/games/filters');
+            const { genres, platforms, themes } = res.data;
             
-            const topGenres = getTopGenres(games, 12); // Top 12 genres
-            const allGenresSorted = getAllGenresSorted(games); // Tous les genres triés
-            const topThemes = getTopThemes(games, 12); // Top 12 thèmes
-            const allThemesSorted = getAllThemesSorted(games); // Tous les thèmes triés
+            // Limiter les genres et thèmes aux top 12
+            const topGenres = genres.slice(0, 12);
+            const topThemes = themes.slice(0, 12);
             
             setCategories(topGenres);
-            setAllCategories(allGenresSorted);
+            setAllCategories(genres);
             setThemes(topThemes);
-            setAllThemes(allThemesSorted);
-            setPlatformGroups(groupPlatforms(Array.from(allPlats)));
+            setAllThemes(themes);
+            setPlatformGroups(groupPlatforms(platforms));
 
         } catch (e) {
             console.error(e);
@@ -152,39 +144,54 @@ const RankingPage: React.FC = () => {
             setLoading(false);
         }
     };
-    fetchData();
+    fetchFilters();
   }, []);
 
   // Fonction de filtrage et tri pour le classement
-  const applyRanking = (type: 'genre' | 'theme' | 'platformGroup' | 'platform', value: string, platformsList?: string[]) => {
-      let filtered: Game[] = [];
+  const applyRanking = async (type: 'genre' | 'theme' | 'platformGroup' | 'platform', value: string, platformsList?: string[]) => {
+      // Définir le filtre IMMÉDIATEMENT (avant même le chargement)
+      // Afficher juste le nom pour l'UI (avant la parenthèse)
+      const displayValue = value.split('(')[0].trim();
+      
       if (type === 'genre') {
-          filtered = allGames.filter(g => g.genres.fr?.includes(value));
-          setCurrentFilter(`Genre : ${value}`);
+          setCurrentFilter(`Genre : ${displayValue}`);
       } else if (type === 'theme') {
-          filtered = allGames.filter(g => g.themes?.fr?.includes(value));
-          setCurrentFilter(`Thème : ${value}`);
-      } else if (type === 'platformGroup') {
-          // Filtrer par groupe de plateformes
-          filtered = allGames.filter(g => 
-              g.platforms.some(p => platformsList?.includes(p))
-          );
-          setCurrentFilter(`${value}`);
+          setCurrentFilter(`Thème : ${displayValue}`);
       } else {
-          // Filtrer par plateforme individuelle
-          filtered = allGames.filter(g => g.platforms.includes(value));
-          setCurrentFilter(`${value}`);
+          setCurrentFilter(`${displayValue}`);
       }
 
-      // Tri par "popularité" (ici champ 'added' mocké)
-      const sorted = filtered.sort((a, b) => (b.added || 0) - (a.added || 0));
-      // Limitation à 10 résultats APRÈS le tri
-      setDisplayGames(sorted.slice(0, 10));
-      
-      // Scroll vers les résultats
+      // Scroll IMMÉDIATEMENT vers les résultats
       setTimeout(() => {
           document.getElementById('ranking-results')?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+      }, 50);
+
+      setLoadingGames(true);
+      setDisplayGames([]);
+      try {
+          let filtered: Game[] = [];
+          
+          // Envoyer le thème COMPLET (avec description) au backend
+          if (type === 'genre') {
+              const res = await api.get('/games', { params: { genres: value, limit: 10, sortBy: 'added', sortOrder: 'desc' } });
+              filtered = res.data.data || res.data;
+          } else if (type === 'theme') {
+              const res = await api.get('/games', { params: { themes: value, limit: 10, sortBy: 'added', sortOrder: 'desc' } });
+              filtered = res.data.data || res.data;
+          } else if (type === 'platformGroup') {
+              const res = await api.get('/games', { params: { platforms: platformsList?.join(','), limit: 10, sortBy: 'added', sortOrder: 'desc' } });
+              filtered = res.data.data || res.data;
+          } else {
+              const res = await api.get('/games', { params: { platforms: value, limit: 10, sortBy: 'added', sortOrder: 'desc' } });
+              filtered = res.data.data || res.data;
+          }
+
+          setDisplayGames(filtered);
+      } catch (error) {
+          console.error('Erreur lors du chargement des jeux:', error);
+      } finally {
+          setLoadingGames(false);
+      }
   };
 
   if (loading) return <div className="min-h-screen bg-[#0e0f10] flex items-center justify-center text-white">Chargement...</div>;
@@ -375,25 +382,34 @@ const RankingPage: React.FC = () => {
                          <div className="h-px w-20 bg-gradient-to-l from-transparent to-blue-500"></div>
                     </div>
 
-                    {/* PODIUM TOP 3 */}
-                    {top3.length > 0 ? (
-                        <div className="flex flex-col md:flex-row items-end justify-center gap-4 md:gap-12 mb-20 px-4">
-                            {/* 2ème place */}
-                            {top3[1] && <PodiumCard game={top3[1]} rank={2} color="bg-gray-400" height="h-48" />}
-                            
-                            {/* 1ère place */}
-                            {top3[0] && <PodiumCard game={top3[0]} rank={1} color="bg-yellow-500" height="h-64" isFirst />}
-                            
-                            {/* 3ème place */}
-                            {top3[2] && <PodiumCard game={top3[2]} rank={3} color="bg-orange-600" height="h-40" />}
+                    {/* SPINNER DE CHARGEMENT */}
+                    {loadingGames ? (
+                        <div className="flex flex-col items-center justify-center py-20">
+                            <div className="relative w-16 h-16 mb-4">
+                                <div className="absolute inset-0 border-4 border-gray-700 rounded-full"></div>
+                                <div className="absolute inset-0 border-4 border-transparent border-t-blue-500 border-r-blue-500 rounded-full animate-spin"></div>
+                            </div>
+                            <p className="text-gray-400 text-lg">Chargement des meilleurs jeux...</p>
                         </div>
-                    ) : (
-                        <div className="text-center text-gray-500 py-10">Aucun jeu trouvé pour ce classement.</div>
-                    )}
+                    ) : displayGames.length > 0 ? (
+                        <>
+                            {/* PODIUM TOP 3 */}
+                            {top3.length > 0 && (
+                                <div className="flex flex-col md:flex-row items-end justify-center gap-4 md:gap-12 mb-20 px-4">
+                                    {/* 2ème place */}
+                                    {top3[1] && <PodiumCard game={top3[1]} rank={2} color="bg-gray-400" height="h-48" />}
+                                    
+                                    {/* 1ère place */}
+                                    {top3[0] && <PodiumCard game={top3[0]} rank={1} color="bg-yellow-500" height="h-64" isFirst />}
+                                    
+                                    {/* 3ème place */}
+                                    {top3[2] && <PodiumCard game={top3[2]} rank={3} color="bg-orange-600" height="h-40" />}
+                                </div>
+                            )}
 
-                    {/* TABLEAU CLASSEMENT (Reste) */}
-                    {restOfGames.length > 0 && (
-                        <div className="mb-20">
+                            {/* TABLEAU CLASSEMENT (Reste) */}
+                            {restOfGames.length > 0 && (
+                                <div className="mb-20">
                             <div className="bg-[#1c1e22] rounded-xl overflow-hidden shadow-2xl border border-gray-800">
                                 {/* Table Header */}
                                 <div className="grid grid-cols-12 bg-blue-600/10 p-4 text-gray-300 font-bold text-sm uppercase tracking-wider items-center border-b border-blue-600/30">
@@ -423,6 +439,10 @@ const RankingPage: React.FC = () => {
                                 ))}
                             </div>
                         </div>
+                    )}
+                        </>
+                    ) : (
+                        <div className="text-center text-gray-500 py-10">Aucun jeu trouvé pour ce classement.</div>
                     )}
                 </div>
             )}
