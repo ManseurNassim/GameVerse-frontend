@@ -37,9 +37,12 @@ const RegisterPage: React.FC = () => {
         
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label className="text-xs text-gray-500 uppercase font-bold ml-1 mb-1 block">Nom d'utilisateur</label>
+            <label htmlFor="username" className="text-xs text-gray-500 uppercase font-bold ml-1 mb-1 block">Nom d'utilisateur</label>
             <input
+              id="username"
+              name="username"
               type="text"
+              autoComplete="username"
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -49,9 +52,12 @@ const RegisterPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="text-xs text-gray-500 uppercase font-bold ml-1 mb-1 block">Email</label>
+            <label htmlFor="email" className="text-xs text-gray-500 uppercase font-bold ml-1 mb-1 block">Email</label>
             <input
+              id="email"
+              name="email"
               type="email"
+              autoComplete="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -61,10 +67,13 @@ const RegisterPage: React.FC = () => {
           </div>
           
           <div>
-            <label className="text-xs text-gray-500 uppercase font-bold ml-1 mb-1 block">Mot de passe</label>
+            <label htmlFor="password" className="text-xs text-gray-500 uppercase font-bold ml-1 mb-1 block">Mot de passe</label>
             <div className="relative">
               <input
+                id="password"
+                name="password"
                 type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

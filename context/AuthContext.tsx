@@ -90,7 +90,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
           await api.post('/auth/register', { user_email, user_username, user_pass });
       } catch (error: any) {
-          throw new Error(error.response?.data?.message || 'Registration failed');
+          const status = error.response?.status;
+          const apiMessage = error.response?.data?.message || error.response?.data;
+
+          let message = apiMessage || error.message || 'Inscription impossible. Merci de réessayer.';
+          if (status === 429) {
+            message = "Trop de requêtes. Réessayez dans quelques minutes.";
+          } else if (status === 409) {
+            message = "Cet email ou ce pseudo est déjà utilisé.";
+          } else if (status === 400) {
+            message = "Champs manquants ou invalides.";
+          }
+
+          throw new Error(message);
       }
   }
 
