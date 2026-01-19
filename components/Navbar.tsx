@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import logo from '../assets/images/logo.png';
 
 const Navbar: React.FC = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, loading } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -22,7 +22,9 @@ const Navbar: React.FC = () => {
           <button onClick={() => navigate('/search')} className="hover:text-blue-400 transition-colors cursor-pointer">RECHERCHE</button>
           <Link to="/classement" className="hover:text-blue-400 transition-colors">CLASSEMENT</Link>
 
-          {isAuthenticated ? (
+          {loading ? (
+            <div className="w-24 h-10 bg-gray-700/30 animate-pulse rounded-full"></div>
+          ) : isAuthenticated ? (
             <Link to="/account" className="flex items-center gap-3 bg-blue-600/20 hover:bg-blue-600/40 px-4 py-2 rounded-full border border-blue-500/30 transition-all backdrop-blur-sm">
               <span className="text-blue-200">{user?.username}</span>
               <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">{user?.username?.charAt(0).toUpperCase()}</div>
@@ -45,7 +47,9 @@ const Navbar: React.FC = () => {
         <Link to="/" onClick={() => setMobileMenuOpen(false)} className="text-sm font-bold uppercase tracking-widest hover:text-blue-500 transition-colors border-b border-gray-800 pb-2 w-3/4 text-center">Accueil</Link>
         <Link to="/search" onClick={() => setMobileMenuOpen(false)} className="text-sm font-bold uppercase tracking-widest hover:text-blue-500 transition-colors border-b border-gray-800 pb-2 w-3/4 text-center">Recherche</Link>
         <Link to="/classement" onClick={() => setMobileMenuOpen(false)} className="text-sm font-bold uppercase tracking-widest hover:text-blue-500 transition-colors border-b border-gray-800 pb-2 w-3/4 text-center">Classement</Link>
-        {isAuthenticated ? (
+        {loading ? (
+          <div className="w-20 h-8 bg-gray-700/30 animate-pulse rounded-full mt-2"></div>
+        ) : isAuthenticated ? (
           <Link to="/account" onClick={() => setMobileMenuOpen(false)} className="text-xs font-bold bg-blue-600/20 border border-blue-500 px-3 py-2 rounded-full text-blue-300 mt-2 truncate max-w-[90%]">Mon Compte</Link>
         ) : (
           <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="text-xs font-bold bg-blue-600 px-4 py-2 rounded-full text-white mt-2">Connexion</Link>
