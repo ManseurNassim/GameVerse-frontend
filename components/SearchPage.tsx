@@ -500,20 +500,15 @@ const SearchPage: React.FC = () => {
                 ) : results.length > 0 ? (
                     <>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-4">
-                            {results.map(game => {
-                                const isAdded = user?.game_list?.includes(game.game_id);
-                                return (
+                            {results.map(game => (
                                     <GameCard
                                         key={game.game_id}
                                         game={game}
                                         showFavoriteButton
                                         variant="grid"
-                                        isFavorite={isAdded || false}
-                                        onFavoriteToggle={() => user && toggleGameInLibrary(game.game_id)}
-                                        className={isAdded ? 'ring-green-500/50 border-2 border-green-500/30' : ''}
+                                        className={user?.game_list?.includes(game.game_id) ? 'ring-green-500/50 border-2 border-green-500/30' : ''}
                                     />
-                                );
-                            })}
+                            ))}
                         </div>
                         {(total === null || results.length < (total || 0)) && (
                             <div className="flex justify-center py-8">

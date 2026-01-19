@@ -1,13 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Game } from '../../types';
+import FavoriteButton from '../FavoriteButton';
 
 interface GameCardProps {
   game: Game;
   variant?: 'grid' | 'list';
   showFavoriteButton?: boolean;
-  isFavorite?: boolean;
-  onFavoriteToggle?: () => void;
   className?: string;
 }
 
@@ -15,19 +14,12 @@ export const GameCard: React.FC<GameCardProps> = ({
   game,
   variant = 'grid',
   showFavoriteButton = false,
-  isFavorite = false,
-  onFavoriteToggle,
   className = ''
 }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
     navigate(`/game/${game.game_id}`);
-  };
-
-  const handleFavoriteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onFavoriteToggle?.();
   };
 
   if (variant === 'list') {
@@ -57,18 +49,7 @@ export const GameCard: React.FC<GameCardProps> = ({
           )}
         </div>
         {showFavoriteButton && (
-          <button
-            onClick={handleFavoriteClick}
-            className={`flex-shrink-0 p-2 rounded-lg transition-all ${
-              isFavorite
-                ? 'bg-green-500/20 text-green-500 border border-green-500/50'
-                : 'bg-gray-700/20 text-gray-400 border border-gray-700/50 hover:bg-gray-700/40'
-            }`}
-          >
-            <svg className="w-5 h-5" fill={isFavorite ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </button>
+          <FavoriteButton gameId={game.game_id} size="sm" />
         )}
       </div>
     );
@@ -90,18 +71,7 @@ export const GameCard: React.FC<GameCardProps> = ({
 
         {/* Favorite Button */}
         {showFavoriteButton && (
-          <button
-            onClick={handleFavoriteClick}
-            className={`absolute top-2 right-2 z-10 p-2 rounded-lg backdrop-blur-sm transition-all ${
-              isFavorite
-                ? 'bg-green-500/80 text-white'
-                : 'bg-black/50 hover:bg-black/80 text-white'
-            }`}
-          >
-            <svg className="w-4 h-4" fill={isFavorite ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </button>
+          <FavoriteButton gameId={game.game_id} size="md" className="absolute top-2 right-2 z-10" />
         )}
 
         {/* Overlay with Title (appears on hover on desktop, always on mobile) */}

@@ -98,8 +98,6 @@ const AccountInfo: React.FC = () => {
                   game={game}
                   showFavoriteButton
                   variant="grid"
-                  isFavorite={true}
-                  onFavoriteToggle={() => toggleGameInLibrary && toggleGameInLibrary(game.game_id)}
                   className="ring-green-500/50 border-2 border-green-500/30"
                 />
               ))}
