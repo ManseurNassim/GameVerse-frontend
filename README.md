@@ -33,10 +33,12 @@ npm run preview
 
 ## Configuration API
 - Fichier : `services/api.ts`
-- Mode mock : `USE_REAL_API = false` (par défaut)
-- Mode réel : `USE_REAL_API = true` et `API_BASE_URL` = URL publique du backend (ex : https://ton-backend.onrender.com)
+- Mode mock : `USE_REAL_API = false`
+- Mode réel : `USE_REAL_API = true` et `API_BASE_URL = 'https://gameverse-backend-g48l.onrender.com'`
 
 Option env (si utilisé) : `VITE_API_BASE_URL` à injecter et lue dans `api.ts`.
+
+Domaine de production : `https://gameverse.nassimmanseur.fr`
 
 ## Variables d'environnement
 - `.env.local` (non versionné) pour les valeurs spécifiques front si besoin.
@@ -45,7 +47,9 @@ Option env (si utilisé) : `VITE_API_BASE_URL` à injecter et lue dans `api.ts`.
 - Root du projet : `frontend/`
 - Build command : `npm run build`
 - Output : `dist`
+- Domaine custom : `gameverse.nassimmanseur.fr` (CNAME vers Vercel)
 - Ajouter `VITE_API_BASE_URL` ou configurer `API_BASE_URL` en dur avant build.
+- S'assurer que le domaine est autorisé dans la liste CORS du backend.
 
 ## Dépendances principales
 - React 19, TypeScript, Vite, Tailwind, React Router, Axios, JWT Decode
