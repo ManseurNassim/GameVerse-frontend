@@ -4,7 +4,7 @@ import { mockData } from './mockData';
 
 // CONFIGURATION
 const USE_REAL_API = true;
-const API_BASE_URL = 'http://localhost:5001';
+const API_BASE_URL = 'https://gameverse-backend-g48l.onrender.com';
 const MOCK_DELAY = 300;
 
 // MOCK SERVICE
