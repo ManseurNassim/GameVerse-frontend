@@ -7,6 +7,7 @@ import AccountInfo from './components/AccountInfo';
 import GameDetails from './components/GameDetails';
 import SearchPage from './components/SearchPage';
 import RankingPage from './components/RankingPage';
+import AboutPage from './components/AboutPage';
 import VerifyEmail from './components/VerifyEmail';
 import Navbar from './components/Navbar';
 import { useAuth } from './context/AuthContext';
@@ -31,6 +32,7 @@ const App = () => {
           <Route path="/game/:id" element={<GameDetails />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/classement" element={<RankingPage />} />
+          <Route path="/about" element={<AboutPage />} />
           
           <Route 
             path="/account" 

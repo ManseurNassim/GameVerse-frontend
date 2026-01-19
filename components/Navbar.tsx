@@ -21,6 +21,7 @@ const Navbar: React.FC = () => {
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
           <button onClick={() => navigate('/search')} className="hover:text-blue-400 transition-colors cursor-pointer">RECHERCHE</button>
           <Link to="/classement" className="hover:text-blue-400 transition-colors">CLASSEMENT</Link>
+          <Link to="/about" className="hover:text-blue-400 transition-colors">À PROPOS</Link>
 
           {loading ? (
             <div className="w-24 h-10 bg-gray-700/30 animate-pulse rounded-full"></div>
@@ -47,6 +48,7 @@ const Navbar: React.FC = () => {
         <Link to="/" onClick={() => setMobileMenuOpen(false)} className="text-sm font-bold uppercase tracking-widest hover:text-blue-500 transition-colors border-b border-gray-800 pb-2 w-3/4 text-center">Accueil</Link>
         <Link to="/search" onClick={() => setMobileMenuOpen(false)} className="text-sm font-bold uppercase tracking-widest hover:text-blue-500 transition-colors border-b border-gray-800 pb-2 w-3/4 text-center">Recherche</Link>
         <Link to="/classement" onClick={() => setMobileMenuOpen(false)} className="text-sm font-bold uppercase tracking-widest hover:text-blue-500 transition-colors border-b border-gray-800 pb-2 w-3/4 text-center">Classement</Link>
+        <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="text-sm font-bold uppercase tracking-widest hover:text-blue-500 transition-colors border-b border-gray-800 pb-2 w-3/4 text-center">À Propos</Link>
         {loading ? (
           <div className="w-20 h-8 bg-gray-700/30 animate-pulse rounded-full mt-2"></div>
         ) : isAuthenticated ? (
