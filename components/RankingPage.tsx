@@ -179,7 +179,8 @@ const RankingPage: React.FC = () => {
               const res = await api.get('/games', { params: { themes: value, limit: 10, sortBy: 'added', sortOrder: 'desc' } });
               filtered = res.data.data || res.data;
           } else if (type === 'platformGroup') {
-              const res = await api.get('/games', { params: { platforms: platformsList?.join(','), limit: 10, sortBy: 'added', sortOrder: 'desc' } });
+              // Envoyer le tableau de plateformes directement (axios le gère)
+              const res = await api.get('/games', { params: { platforms: platformsList, platformsMode: 'OR', limit: 10, sortBy: 'added', sortOrder: 'desc' } });
               filtered = res.data.data || res.data;
           } else {
               const res = await api.get('/games', { params: { platforms: value, limit: 10, sortBy: 'added', sortOrder: 'desc' } });
